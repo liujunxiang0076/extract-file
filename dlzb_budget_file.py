@@ -441,11 +441,11 @@ def extract_with_openpyxl(file_path, result):
         ws = wb.active
         
         # 使用增强的关键字搜索提取内容
-        result['事业部预算编号'] = find_value_by_keyword(ws, ['事业部预算编号', '预算编号', '预算号'])
-        result['合同号'] = find_value_by_keyword(ws, ['合同号', '合同编号', '合同名称'])
-        result['部门（显示值）'] = find_value_by_keyword(ws, ['部门（显示值）', '部门(显示值)', '部门'])
-        result['单据编号'] = find_value_by_keyword(ws, ['单据编号', '单据号', '凭证号'])
-        result['备注'] = find_value_by_keyword(ws, ['备注', '备注说明', '说明'])
+        result['事业部预算编号'] = find_value_by_keyword(ws, ['事业部预算编号', '预算编号', '预算号', '预算单号', '项目编号', '项目号', '事业部编号'])
+        result['合同号'] = find_value_by_keyword(ws, ['合同号', '合同编号', '合同名称', '合同内容', '合同标的', '项目名称', '项目内容'])
+        result['部门（显示值）'] = find_value_by_keyword(ws, ['部门（显示值）', '部门(显示值)', '部门', '使用部门', '申请部门', '所属部门', '责任部门'])
+        result['单据编号'] = find_value_by_keyword(ws, ['单据编号', '单据号', '凭证号', '凭证编号', '发票号', '发票编号', '申请单号'])
+        result['备注'] = find_value_by_keyword(ws, ['备注', '备注说明', '说明', '项目说明', '其他说明', '补充说明', '附注'])
         
         # 记录缺失数据统计
         for field, value in result.items():
@@ -504,11 +504,11 @@ def extract_with_xlrd(file_path, result):
         ws = wb.sheet_by_index(0)  # 获取第一个工作表
         
         # 使用增强的关键字搜索提取内容
-        result['事业部预算编号'] = find_value_by_keyword(ws, ['事业部预算编号', '预算编号', '预算号'])
-        result['合同号'] = find_value_by_keyword(ws, ['合同号', '合同编号', '合同名称'])
-        result['部门（显示值）'] = find_value_by_keyword(ws, ['部门（显示值）', '部门(显示值)', '部门'])
-        result['单据编号'] = find_value_by_keyword(ws, ['单据编号', '单据号', '凭证号'])
-        result['备注'] = find_value_by_keyword(ws, ['备注', '备注说明', '说明'])
+        result['事业部预算编号'] = find_value_by_keyword(ws, ['事业部预算编号', '预算编号', '预算号', '预算单号', '项目编号', '项目号', '事业部编号'])
+        result['合同号'] = find_value_by_keyword(ws, ['合同号', '合同编号', '合同名称', '合同内容', '合同标的', '项目名称', '项目内容'])
+        result['部门（显示值）'] = find_value_by_keyword(ws, ['部门（显示值）', '部门(显示值)', '部门', '使用部门', '申请部门', '所属部门', '责任部门'])
+        result['单据编号'] = find_value_by_keyword(ws, ['单据编号', '单据号', '凭证号', '凭证编号', '发票号', '发票编号', '申请单号'])
+        result['备注'] = find_value_by_keyword(ws, ['备注', '备注说明', '说明', '项目说明', '其他说明', '补充说明', '附注'])
         
         # 记录缺失数据统计
         for field, value in result.items():
