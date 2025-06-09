@@ -1,0 +1,38 @@
+# Python开发环境
+venv/
+.env
+.env.local
+.env.development
+
+# 编译文件
+__pycache__/
+*.py[cod]
+*.so
+.Python
+
+# IDE配置
+.vscode/
+.idea/
+.DS_Store
+
+# 日志和测试文件
+*.log
+*.sqlite
+*.sublime-workspace
+
+# 本地开发文件
+local_settings.py
+instance/
+
+# 安装包和构建产物
+build/
+dist/
+*.egg-info/
+*.egg
+
+# 临时文件
+*.swp
+*.swo
+
+# 添加这行（如果还没有）
+.venv/

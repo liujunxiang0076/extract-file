@@ -302,7 +302,7 @@ def extract_excel_content(file_path):
             '备注': ''
         }
 
-def find_value_by_keyword(worksheet, keywords, max_rows=30, max_cols=15):
+def find_value_by_keyword(worksheet, keywords, max_rows=50, max_cols=20):
     """
     在工作表中查找关键字并返回相应的值
     
@@ -320,6 +320,27 @@ def find_value_by_keyword(worksheet, keywords, max_rows=30, max_cols=15):
     
     # 对openpyxl工作表的处理
     if hasattr(worksheet, 'iter_rows'):
+        # 首先，尝试查找精确匹配的单元格
+        for row_idx, row in enumerate(worksheet.iter_rows(min_row=1, max_row=max_rows, max_col=max_cols), 1):
+            for col_idx, cell in enumerate(row, 1):
+                if cell.value:
+                    cell_text = str(cell.value).strip().lower()
+                    for keyword in normalized_keywords:
+                        # 精确匹配关键字
+                        if cell_text == keyword or cell_text == keyword + "：" or cell_text == keyword + ":":
+                            # 检查右侧单元格
+                            if col_idx < max_cols:
+                                right_cell = worksheet.cell(row=row_idx, column=col_idx+1)
+                                if right_cell.value:
+                                    return str(right_cell.value).strip()
+                            
+                            # 检查下方单元格
+                            if row_idx < max_rows:
+                                below_cell = worksheet.cell(row=row_idx+1, column=col_idx)
+                                if below_cell.value:
+                                    return str(below_cell.value).strip()
+
+        # 然后，尝试查找包含关键字的单元格
         for row_idx, row in enumerate(worksheet.iter_rows(min_row=1, max_row=max_rows, max_col=max_cols), 1):
             for col_idx, cell in enumerate(row, 1):
                 if cell.value:
@@ -352,9 +373,38 @@ def find_value_by_keyword(worksheet, keywords, max_rows=30, max_cols=15):
                                                 return str(right_cell.value).strip()
                             except:
                                 pass
+                            
+                            # 查找同行中的其他单元格
+                            for check_col in range(1, min(max_cols, worksheet.max_column) + 1):
+                                if check_col != col_idx:
+                                    check_cell = worksheet.cell(row=row_idx, column=check_col)
+                                    if check_cell.value and isinstance(check_cell.value, str) and len(check_cell.value.strip()) > 0:
+                                        return str(check_cell.value).strip()
     
     # 对xlrd工作表的处理
     else:
+        # 首先，尝试查找精确匹配的单元格
+        for row_idx in range(min(max_rows, worksheet.nrows)):
+            for col_idx in range(min(max_cols, worksheet.ncols)):
+                cell_value = worksheet.cell_value(row_idx, col_idx)
+                if cell_value:
+                    cell_text = str(cell_value).strip().lower()
+                    for keyword in normalized_keywords:
+                        # 精确匹配关键字
+                        if cell_text == keyword or cell_text == keyword + "：" or cell_text == keyword + ":":
+                            # 检查右侧单元格
+                            if col_idx + 1 < worksheet.ncols:
+                                right_value = worksheet.cell_value(row_idx, col_idx + 1)
+                                if right_value:
+                                    return str(right_value).strip()
+                            
+                            # 检查下方单元格
+                            if row_idx + 1 < worksheet.nrows:
+                                below_value = worksheet.cell_value(row_idx + 1, col_idx)
+                                if below_value:
+                                    return str(below_value).strip()
+
+        # 然后，尝试查找包含关键字的单元格
         for row_idx in range(min(max_rows, worksheet.nrows)):
             for col_idx in range(min(max_cols, worksheet.ncols)):
                 cell_value = worksheet.cell_value(row_idx, col_idx)
@@ -373,6 +423,13 @@ def find_value_by_keyword(worksheet, keywords, max_rows=30, max_cols=15):
                                 below_value = worksheet.cell_value(row_idx + 1, col_idx)
                                 if below_value:
                                     return str(below_value).strip()
+                                    
+                            # 查找同行中的其他单元格
+                            for check_col in range(min(max_cols, worksheet.ncols)):
+                                if check_col != col_idx:
+                                    check_value = worksheet.cell_value(row_idx, check_col)
+                                    if check_value and isinstance(check_value, str) and len(str(check_value).strip()) > 0:
+                                        return str(check_value).strip()
     
     return ""
 
